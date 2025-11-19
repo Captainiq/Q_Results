@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Financial Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-card .label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-group label {
+            font-size: 0.85em;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .filter-group select, .filter-group input {
+            padding: 8px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 0.95em;
+            min-width: 150px;
+        }
+
+        .refresh-btn {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: auto;
+        }
+
+        .refresh-btn:hover {
+            background: #5568d3;
+        }
+
+        .companies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .company-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .company-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+        }
+
+        .company-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .company-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .company-symbol {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .sector-badge {
+            background: #f0f0f0;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .market-cap {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .metric {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .metric-label {
+            font-size: 0.75em;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .positive {
+            color: #10b981;
+        }
+
+        .negative {
+            color: #ef4444;
+        }
+
+        .neutral {
+            color: #f59e0b;
+        }
+
+        .revenue-stream {
+            margin-top: 12px;
+            padding: 12px;
+            background: #f0f7ff;
+            border-left: 4px solid #667eea;
+            border-radius: 4px;
+        }
+
+        .revenue-stream-label {
+            font-size: 0.8em;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .revenue-stream-value {
+            font-size: 0.95em;
+            color: #333;
+        }
+
+        .debt-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .debt-reduced {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .debt-increased {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 1.2em;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 12px;
+            color: #666;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .company-card {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Company Financial Dashboard</h1>
+            <p class="subtitle">Real-time insights from your portfolio</p>
+            <p class="subtitle">All values calculated in YoY</p>
+        </div>
+
+        <div id="statsBar" class="stats-bar"></div>
+
+        <div class="filters">
+            <div class="filter-group">
+                <label>Sector</label>
+                <select id="sectorFilter">
+                    <option value="">All Sectors</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Search</label>
+                <input type="text" id="searchInput" placeholder="Search company...">
+            </div>
+            <div class="filter-group">
+                <label>Sort By</label>
+                <select id="sortFilter">
+                    <option value="name">Company Name</option>
+                    <option value="marketCap">Market Cap</option>
+                    <option value="revenue">Revenue Growth</option>
+                    <option value="profit">Profit Growth</option>
+                </select>
+            </div>
+            <button class="refresh-btn" onclick="loadData()">🔄 Refresh Data</button>
+        </div>
+
+        <div id="loading" class="loading">Loading data...</div>
+        <div id="companiesGrid" class="companies-grid"></div>
+    </div>
+
+    <script>
+        const SHEET_ID = '12e5NUDJQXnyB2V27WynpgGw2Gwg4oxqefc8jVOyy3aM';
+        const API_KEY = 'AIzaSyBYXp1ILH81N2lo_oPn6mGvju0hpyWTHFI';
+        const RANGE = 'Double_Digit_Growth_Q2!A1:M1001';
+
+        let allCompanies = [];
+        let filteredCompanies = [];
+
+        async function loadData() {
+            const loading = document.getElementById('loading');
+            const grid = document.getElementById('companiesGrid');
+            
+            loading.style.display = 'block';
+            grid.innerHTML = '';
+
+            try {
+                const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.values && data.values.length > 1) {
+                    allCompanies = parseSheetData(data.values);
+                    filteredCompanies = [...allCompanies];
+                    populateSectorFilter();
+                    updateStats();
+                    applyFilters();
+                    loading.style.display = 'none';
+                } else {
+                    loading.innerHTML = '<div class="no-data">No data found in the sheet</div>';
+                }
+            } catch (error) {
+                loading.innerHTML = `<div class="no-data">Error loading data: ${error.message}</div>`;
+            }
+        }
+
+        function parseSheetData(rows) {
+            const companies = [];
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i];
+                if (row[0]) {
+                    companies.push({
+                        name: row[0] || '',
+                        symbol: row[1] || '',
+                        marketCap: row[2] || '',
+                        revenueGrowth: parseFloat(row[3]) || 0,
+                        profitGrowth: parseFloat(row[4]) || 0,
+                        marginExpansion: parseFloat(row[5]) || 0,
+                        sector: row[6] || 'Unknown',
+                        revenueStream: row[7] || '',
+                        debtReduced: row[8] || ''
+                    });
+                }
+            }
+            return companies;
+        }
+
+        function populateSectorFilter() {
+            const sectors = [...new Set(allCompanies.map(c => c.sector))].sort();
+            const sectorFilter = document.getElementById('sectorFilter');
+            sectorFilter.innerHTML = '<option value="">All Sectors</option>';
+            sectors.forEach(sector => {
+                sectorFilter.innerHTML += `<option value="${sector}">${sector}</option>`;
+            });
+        }
+
+        function updateStats() {
+            const statsBar = document.getElementById('statsBar');
+            const totalCompanies = allCompanies.length;
+            const avgRevGrowth = (allCompanies.reduce((sum, c) => sum + c.revenueGrowth, 0) / totalCompanies).toFixed(1);
+            const avgProfitGrowth = (allCompanies.reduce((sum, c) => sum + c.profitGrowth, 0) / totalCompanies).toFixed(1);
+            const debtReducers = allCompanies.filter(c => c.debtReduced.toLowerCase().includes('yes') || c.debtReduced.toLowerCase().includes('reduced')).length;
+
+            statsBar.innerHTML = `
+                <div class="stat-card">
+                    <div class="label">Total Companies</div>
+                    <div class="value">${totalCompanies}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Avg Revenue Growth</div>
+                    <div class="value">${avgRevGrowth}%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Avg Profit Growth</div>
+                    <div class="value">${avgProfitGrowth}%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Debt Reducers</div>
+                    <div class="value">${debtReducers}</div>
+                </div>
+            `;
+        }
+
+        function applyFilters() {
+            const sector = document.getElementById('sectorFilter').value;
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const sort = document.getElementById('sortFilter').value;
+
+            filteredCompanies = allCompanies.filter(company => {
+                const matchesSector = !sector || company.sector === sector;
+                const matchesSearch = !search || 
+                    company.name.toLowerCase().includes(search) || 
+                    company.symbol.toLowerCase().includes(search);
+                return matchesSector && matchesSearch;
+            });
+
+            sortCompanies(sort);
+            renderCompanies();
+        }
+
+        function sortCompanies(sortBy) {
+            filteredCompanies.sort((a, b) => {
+                switch(sortBy) {
+                    case 'name':
+                        return a.name.localeCompare(b.name);
+                    case 'marketCap':
+                        return parseMarketCap(b.marketCap) - parseMarketCap(a.marketCap);
+                    case 'revenue':
+                        return b.revenueGrowth - a.revenueGrowth;
+                    case 'profit':
+                        return b.profitGrowth - a.profitGrowth;
+                    default:
+                        return 0;
+                }
+            });
+        }
+
+        function parseMarketCap(cap) {
+            const num = parseFloat(cap);
+            if (cap.includes('T')) return num * 1000000000000;
+            if (cap.includes('B')) return num * 1000000000;
+            if (cap.includes('M')) return num * 1000000;
+            return num;
+        }
+
+        function renderCompanies() {
+            const grid = document.getElementById('companiesGrid');
+            
+            if (filteredCompanies.length === 0) {
+                grid.innerHTML = '<div class="no-data">No companies match your filters</div>';
+                return;
+            }
+
+            grid.innerHTML = filteredCompanies.map(company => `
+                <div class="company-card">
+                    <div class="company-header">
+                        <div>
+                            <div class="company-name">${company.name}</div>
+                            <span class="company-symbol">${company.symbol}</span>
+                        </div>
+                        <span class="sector-badge">${company.sector}</span>
+                    </div>
+                    
+                    <div class="market-cap">💰 ${company.marketCap}</div>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <div class="metric-label">Revenue Growth</div>
+                            <div class="metric-value ${getColorClass(company.revenueGrowth)}">
+                                ${company.revenueGrowth > 0 ? '+' : ''}${company.revenueGrowth}%
+                            </div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Profit Growth</div>
+                            <div class="metric-value ${getColorClass(company.profitGrowth)}">
+                                ${company.profitGrowth > 0 ? '+' : ''}${company.profitGrowth}%
+                            </div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Margin Expansion</div>
+                            <div class="metric-value ${getColorClass(company.marginExpansion)}">
+                                ${company.marginExpansion > 0 ? '+' : ''}${company.marginExpansion}%
+                            </div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Debt Status</div>
+                            <div class="debt-indicator ${isDebtReduced(company.debtReduced) ? 'debt-reduced' : 'debt-increased'}">
+                                ${isDebtReduced(company.debtReduced) ? '✓ Reduced' : '✗ Not Reduced'}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="revenue-stream">
+                        <div class="revenue-stream-label">Main Revenue Stream</div>
+                        <div class="revenue-stream-value">${company.revenueStream}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getColorClass(value) {
+            if (value > 0) return 'positive';
+            if (value < 0) return 'negative';
+            return 'neutral';
+        }
+
+        function isDebtReduced(debtStatus) {
+            const status = debtStatus.toLowerCase();
+            return status.includes('yes') || status.includes('reduced');
+        }
+
+        document.getElementById('sectorFilter').addEventListener('change', applyFilters);
+        document.getElementById('searchInput').addEventListener('input', applyFilters);
+        document.getElementById('sortFilter').addEventListener('change', applyFilters);
+
+        loadData();
+        setInterval(loadData, 60000);
+    </script>
+</body>
+</html>
