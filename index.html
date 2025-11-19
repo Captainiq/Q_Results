@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -198,17 +199,9 @@
             font-weight: bold;
         }
 
-        .positive {
-            color: #10b981;
-        }
-
-        .negative {
-            color: #ef4444;
-        }
-
-        .neutral {
-            color: #f59e0b;
-        }
+        .positive { color: #10b981; }
+        .negative { color: #ef4444; }
+        .neutral { color: #f59e0b; }
 
         .revenue-stream {
             margin-top: 12px;
@@ -229,25 +222,57 @@
             color: #333;
         }
 
-        .debt-indicator {
+        /* --- NEW RATING STYLES --- */
+        .status-badge {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
+            padding: 4px 10px;
             border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 600;
-            margin-top: 10px;
+            font-size: 0.9em;
+            font-weight: 700;
+            text-transform: capitalize;
+            margin-top: 5px;
         }
 
-        .debt-reduced {
+        /* 1. Excellent - Deep Green */
+        .status-excellent {
             background: #d1fae5;
             color: #065f46;
+            border: 1px solid #34d399;
         }
 
-        .debt-increased {
+        /* 2. Great - Bright Green */
+        .status-great {
+            background: #ecfdf5;
+            color: #059669;
+            border: 1px solid #6ee7b7;
+        }
+
+        /* 3. Good - Blue */
+        .status-good {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+        }
+
+        /* 4. Bad - Orange/Yellow */
+        .status-bad {
+            background: #fffbeb;
+            color: #92400e;
+            border: 1px solid #fcd34d;
+        }
+
+        /* 5. Weak - Red */
+        .status-weak {
             background: #fee2e2;
             color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        /* Default */
+        .status-unknown {
+            background: #f3f4f6;
+            color: #4b5563;
         }
 
         .loading {
@@ -361,7 +386,8 @@
                         marginExpansion: parseFloat(row[5]) || 0,
                         sector: row[6] || 'Unknown',
                         revenueStream: row[7] || '',
-                        debtReduced: row[8] || ''
+                        // CHANGED: Read text instead of boolean for new 5-tier system
+                        resultStatus: row[8] ? row[8].trim() : 'Unknown'
                     });
                 }
             }
@@ -382,7 +408,12 @@
             const totalCompanies = allCompanies.length;
             const avgRevGrowth = (allCompanies.reduce((sum, c) => sum + c.revenueGrowth, 0) / totalCompanies).toFixed(1);
             const avgProfitGrowth = (allCompanies.reduce((sum, c) => sum + c.profitGrowth, 0) / totalCompanies).toFixed(1);
-            const debtReducers = allCompanies.filter(c => c.debtReduced.toLowerCase().includes('yes') || c.debtReduced.toLowerCase().includes('reduced')).length;
+            
+            // CHANGED: Count "Top Performers" (Excellent + Great) instead of "Debt Reduced"
+            const topPerformers = allCompanies.filter(c => 
+                c.resultStatus.toLowerCase().includes('excellent') || 
+                c.resultStatus.toLowerCase().includes('great')
+            ).length;
 
             statsBar.innerHTML = `
                 <div class="stat-card">
@@ -390,16 +421,16 @@
                     <div class="value">${totalCompanies}</div>
                 </div>
                 <div class="stat-card">
-                    <div class="label">Avg Revenue Growth</div>
-                    <div class="value">${avgRevGrowth}%</div>
+                    <div class="label">Avg Rev Growth</div>
+                    <div class="value">${isNaN(avgRevGrowth) ? 0 : avgRevGrowth}%</div>
                 </div>
                 <div class="stat-card">
                     <div class="label">Avg Profit Growth</div>
-                    <div class="value">${avgProfitGrowth}%</div>
+                    <div class="value">${isNaN(avgProfitGrowth) ? 0 : avgProfitGrowth}%</div>
                 </div>
                 <div class="stat-card">
-                    <div class="label">Debt Reducers</div>
-                    <div class="value">${debtReducers}</div>
+                    <div class="label">Top Rated Companies</div>
+                    <div class="value">${topPerformers}</div>
                 </div>
             `;
         }
@@ -485,12 +516,14 @@
                                 ${company.marginExpansion > 0 ? '+' : ''}${company.marginExpansion}%
                             </div>
                         </div>
+                        
                         <div class="metric">
-                            <div class="metric-label">Debt Status</div>
-                            <div class="debt-indicator ${isDebtReduced(company.debtReduced) ? 'debt-reduced' : 'debt-increased'}">
-                                ${isDebtReduced(company.debtReduced) ? '✓ Reduced' : '✗ Not Reduced'}
+                            <div class="metric-label">Performance Rating</div>
+                            <div class="status-badge ${getStatusClass(company.resultStatus)}">
+                                ${company.resultStatus}
                             </div>
                         </div>
+
                     </div>
                     
                     <div class="revenue-stream">
@@ -507,9 +540,17 @@
             return 'neutral';
         }
 
-        function isDebtReduced(debtStatus) {
-            const status = debtStatus.toLowerCase();
-            return status.includes('yes') || status.includes('reduced');
+        // CHANGED: Helper function to map text to color class
+        function getStatusClass(status) {
+            const s = status.toLowerCase();
+            
+            if (s.includes('excellent')) return 'status-excellent';
+            if (s.includes('great')) return 'status-great';
+            if (s.includes('good')) return 'status-good';
+            if (s.includes('bad')) return 'status-bad';
+            if (s.includes('weak')) return 'status-weak';
+            
+            return 'status-unknown';
         }
 
         document.getElementById('sectorFilter').addEventListener('change', applyFilters);
@@ -521,3 +562,4 @@
     </script>
 </body>
 </html>
+```
