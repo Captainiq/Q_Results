@@ -383,7 +383,7 @@
                         marketCap: row[2] || '',
                         revenueGrowth: parseFloat(row[3]) || 0,
                         profitGrowth: parseFloat(row[4]) || 0,
-                        marginExpansion: parseFloat(row[5]) || 0,
+                        marginExpansion: row[5] ? row[5].trim() : 'Unknown',
                         sector: row[6] || 'Unknown',
                         revenueStream: row[7] || '',
                         // CHANGED: Read text instead of boolean for new 5-tier system
@@ -512,10 +512,11 @@
                         </div>
                         <div class="metric">
                             <div class="metric-label">Margin Expansion</div>
-                            <div class="metric-value ${getColorClass(company.marginExpansion)}">
-                                ${company.marginExpansion > 0 ? '+' : ''}${company.marginExpansion}%
+                            <div class="metric-value ${company.marginExpansion.toLowerCase() === 'yes' ? 'positive' : 'negative'}">
+                                ${company.marginExpansion}
                             </div>
                         </div>
+
                         
                         <div class="metric">
                             <div class="metric-label">Performance Rating</div>
