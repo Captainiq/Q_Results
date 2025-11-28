@@ -635,14 +635,27 @@
     }
 
     function parseMCap(str) {
-        if(!str) return 0;
-        const s = str.toUpperCase().replace(/,/g, '');
-        let num = parseFloat(s);
-        if (s.includes('T')) num *= 1e12;
-        else if (s.includes('B')) num *= 1e9;
-        else if (s.includes('M')) num *= 1e6;
-        else if (s.includes('K')) num *= 1e3;
-        return isNaN(num) ? 0 : num;
+        if (!str) return 0;
+        
+        // 1. Normalize: Uppercase and remove commas
+        let s = str.toString().toUpperCase().replace(/,/g, '');
+        
+        // 2. Extract the numeric value (removes currency symbols like ₹, $)
+        // This Regex finds the first valid number in the string
+        let match = s.match(/[\d\.]+/); 
+        if (!match) return 0;
+        
+        let num = parseFloat(match[0]);
+
+        // 3. Apply Multipliers (Handles both International & Indian standards)
+        if (s.includes('T')) num *= 1e12;       // Trillion
+        else if (s.includes('B')) num *= 1e9;   // Billion
+        else if (s.includes('CR')) num *= 1e7;  // Crore (Indian)
+        else if (s.includes('M')) num *= 1e6;   // Million
+        else if (s.includes('L')) num *= 1e5;   // Lakh (Indian)
+        else if (s.includes('K')) num *= 1e3;   // Thousand
+
+        return num;
     }
 
     function getColor(val) {
