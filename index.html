@@ -11,21 +11,21 @@
     <style>
         :root {
             /* Professional Palette */
-            --bg-body: #f1f5f9;
+            --bg-body: #f8fafc;
             --bg-card: #ffffff;
-            --text-primary: #1e293b;
+            --text-primary: #0f172a;
             --text-secondary: #64748b;
             --primary: #4f46e5; /* Indigo */
             --primary-hover: #4338ca;
             --success-bg: #dcfce7;
-            --success-text: #15803d;
+            --success-text: #166534;
             --danger-bg: #fee2e2;
-            --danger-text: #b91c1c;
+            --danger-text: #991b1b;
             --border: #e2e8f0;
             --radius: 12px;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
-            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
-            --shadow-hover: 0 10px 15px -3px rgba(0,0,0,0.1);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -41,15 +41,15 @@
         .container {
             max-width: 1440px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 24px;
         }
 
         /* --- Header Section --- */
         .header-section {
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            margin-bottom: 30px;
+            gap: 24px;
+            margin-bottom: 32px;
         }
 
         .header-top {
@@ -57,41 +57,45 @@
             justify-content: space-between;
             align-items: flex-end;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 16px;
         }
 
         h1 {
-            font-size: 1.75rem;
-            font-weight: 700;
+            font-size: 2rem;
+            font-weight: 800;
             color: var(--text-primary);
             letter-spacing: -0.025em;
         }
 
         .subtitle {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: var(--text-secondary);
             margin-top: 4px;
         }
 
         .last-updated {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
+            font-weight: 500;
             color: var(--text-secondary);
             background: #fff;
-            padding: 6px 12px;
-            border-radius: 20px;
+            padding: 8px 16px;
+            border-radius: 99px;
             border: 1px solid var(--border);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
         /* --- Stats Bar --- */
         .stats-bar {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 16px;
         }
 
         .stat-card {
             background: var(--bg-card);
-            padding: 20px;
+            padding: 24px;
             border-radius: var(--radius);
             border: 1px solid var(--border);
             box-shadow: var(--shadow-sm);
@@ -101,30 +105,55 @@
         }
 
         .stat-card .label {
-            font-size: 0.85rem;
-            font-weight: 500;
+            font-size: 0.75rem;
+            font-weight: 700;
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            margin-bottom: 8px;
+            margin-bottom: 16px;
         }
 
         .stat-card .value {
-            font-size: 1.8rem;
-            font-weight: 700;
+            font-size: 2rem;
+            font-weight: 800;
             color: var(--text-primary);
+        }
+
+        /* Sub-stats for the multi-value cards */
+        .sub-stats-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        
+        .sub-stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sub-stat-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .sub-stat-val {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
         }
 
         /* --- Controls & Filters --- */
         .controls {
             background: var(--bg-card);
-            padding: 16px 20px;
+            padding: 20px;
             border-radius: var(--radius);
             border: 1px solid var(--border);
             box-shadow: var(--shadow-sm);
-            margin-bottom: 24px;
+            margin-bottom: 32px;
             display: flex;
-            gap: 16px;
+            gap: 20px;
             align-items: flex-end;
             flex-wrap: wrap;
         }
@@ -132,46 +161,51 @@
         .control-group {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
             flex: 1;
-            min-width: 200px;
+            min-width: 220px;
         }
 
         .control-group label {
             font-size: 0.75rem;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-secondary);
             text-transform: uppercase;
         }
 
         select, input {
             width: 100%;
-            padding: 10px 12px;
+            padding: 12px 16px;
             border: 1px solid var(--border);
             border-radius: 8px;
             font-family: inherit;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: var(--text-primary);
             background-color: #f8fafc;
-            transition: border-color 0.2s;
+            transition: all 0.2s;
         }
 
         select:focus, input:focus {
             outline: none;
             border-color: var(--primary);
             background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
         }
 
         .btn-refresh {
             background-color: var(--primary);
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: 8px;
             font-weight: 600;
+            font-size: 0.95rem;
             cursor: pointer;
             transition: all 0.2s;
-            height: 42px; /* Match input height */
+            height: 48px; /* Match input height */
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .btn-refresh:hover {
@@ -182,7 +216,7 @@
         /* --- Grid & Cards --- */
         .companies-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 24px;
         }
 
@@ -192,7 +226,7 @@
             border-radius: var(--radius);
             padding: 24px;
             position: relative;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: var(--shadow-sm);
             display: flex;
             flex-direction: column;
@@ -208,24 +242,24 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
         .company-name {
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             font-weight: 700;
             color: var(--text-primary);
             line-height: 1.3;
         }
 
         .sector-tag {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: 600;
             background: #f1f5f9;
             color: var(--text-secondary);
-            padding: 4px 8px;
+            padding: 4px 10px;
             border-radius: 6px;
-            margin-top: 6px;
+            margin-top: 8px;
             display: inline-block;
         }
 
@@ -233,8 +267,8 @@
             background: var(--primary);
             color: white;
             font-size: 0.75rem;
-            font-weight: 600;
-            padding: 4px 8px;
+            font-weight: 700;
+            padding: 4px 10px;
             border-radius: 6px;
         }
 
@@ -242,15 +276,14 @@
             margin-bottom: 20px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: space-between;
             font-size: 0.9rem;
-            color: var(--text-secondary);
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f1f5f9;
         }
 
-        .market-cap-value {
-            font-weight: 700;
-            color: var(--text-primary);
-        }
+        .market-cap-label { color: var(--text-secondary); }
+        .market-cap-value { font-weight: 700; color: var(--text-primary); }
 
         /* Metrics Grid */
         .metrics-container {
@@ -269,12 +302,14 @@
 
         .metric-label {
             font-size: 0.7rem;
+            font-weight: 600;
             color: var(--text-secondary);
-            margin-bottom: 4px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
         }
 
         .metric-val {
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 700;
         }
 
@@ -282,10 +317,12 @@
         .status-badge {
             display: inline-flex;
             align-items: center;
-            padding: 4px 10px;
+            justify-content: center;
+            padding: 6px 12px;
             border-radius: 99px;
             font-size: 0.75rem;
             font-weight: 700;
+            width: 100%;
         }
         .st-excellent { background: #064e3b; color: #ecfdf5; }
         .st-great { background: #10b981; color: white; }
@@ -302,11 +339,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background: linear-gradient(to right, rgba(255,255,255,0), rgba(248,250,252,0.5));
         }
 
         .pct-label {
             font-size: 0.8rem;
-            font-weight: 500;
+            font-weight: 600;
             color: var(--text-secondary);
         }
 
@@ -315,7 +353,9 @@
             font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 8px;
         }
 
         /* Colors & Animations */
@@ -326,43 +366,32 @@
         .change-pos {
             color: var(--success-text);
             background-color: var(--success-bg);
-            padding: 4px 10px;
-            border-radius: 8px;
-            animation: pulse-green 2s infinite;
+            box-shadow: 0 0 0 1px rgba(22, 101, 52, 0.1);
         }
 
         .change-neg {
             color: var(--danger-text);
             background-color: var(--danger-bg);
-            padding: 4px 10px;
-            border-radius: 8px;
-            animation: pulse-red 2s infinite;
+            box-shadow: 0 0 0 1px rgba(153, 27, 27, 0.1);
         }
 
-        @keyframes pulse-green {
-            0% { box-shadow: 0 0 0 0 rgba(21, 128, 61, 0.4); }
-            70% { box-shadow: 0 0 0 6px rgba(21, 128, 61, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(21, 128, 61, 0); }
-        }
-
-        @keyframes pulse-red {
-            0% { box-shadow: 0 0 0 0 rgba(185, 28, 28, 0.4); }
-            70% { box-shadow: 0 0 0 6px rgba(185, 28, 28, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(185, 28, 28, 0); }
+        .change-neu {
+            color: var(--text-secondary);
+            background-color: #f1f5f9;
         }
 
         /* --- SKELETON LOADING --- */
         .skeleton {
             background: #e2e8f0;
             background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
-            border-radius: 5px;
+            border-radius: 8px;
             background-size: 200% 100%;
             animation: 1.5s shine linear infinite;
         }
         @keyframes shine { to { background-position-x: -200%; } }
         
-        .sk-card { height: 320px; border-radius: 12px; }
-        .no-data { text-align: center; grid-column: 1 / -1; padding: 40px; color: var(--text-secondary); }
+        .sk-card { height: 360px; border-radius: 12px; }
+        .no-data { text-align: center; grid-column: 1 / -1; padding: 60px; color: var(--text-secondary); font-weight: 500; }
 
     </style>
 </head>
@@ -373,23 +402,25 @@
         <div class="header-top">
             <div>
                 <h1>📊 Market Intelligence</h1>
-                <div class="subtitle">Real-time financial performance & YoY growth metrics</div>
+                <div class="subtitle">Real-time financial performance & post-result analysis</div>
             </div>
-            <div id="lastUpdated" class="last-updated">Last Sync: --:--</div>
+            <div id="lastUpdated" class="last-updated">
+                <span>Last Sync:</span> <strong>--:--</strong>
+            </div>
         </div>
         
         <div id="statsBar" class="stats-bar">
-            <div class="stat-card skeleton sk-card" style="height: 100px;"></div>
-            <div class="stat-card skeleton sk-card" style="height: 100px;"></div>
-            <div class="stat-card skeleton sk-card" style="height: 100px;"></div>
-            <div class="stat-card skeleton sk-card" style="height: 100px;"></div>
+            <div class="stat-card skeleton sk-card" style="height: 120px;"></div>
+            <div class="stat-card skeleton sk-card" style="height: 120px;"></div>
+            <div class="stat-card skeleton sk-card" style="height: 120px;"></div>
+            <div class="stat-card skeleton sk-card" style="height: 120px;"></div>
         </div>
     </div>
 
     <div class="controls">
         <div class="control-group">
             <label>Search</label>
-            <input type="text" id="searchInput" placeholder="Company name or symbol...">
+            <input type="text" id="searchInput" placeholder="Search Company or Symbol...">
         </div>
         <div class="control-group">
             <label>Sector Filter</label>
@@ -404,7 +435,8 @@
                 <option value="marketCap">Market Cap (High-Low)</option>
                 <option value="revenue">Revenue Growth (High-Low)</option>
                 <option value="profit">Profit Growth (High-Low)</option>
-                <option value="change">Recent Change (High-Low)</option>
+                <option value="change">Price Change (Top Gainers)</option>
+                <option value="change_neg">Price Change (Top Losers)</option>
             </select>
         </div>
         <button class="btn-refresh" onclick="loadData()">
@@ -432,7 +464,7 @@
         filteredCompanies: []
     };
 
-    // --- Data Fetching ---
+    // --- Data Fetching --- 
     async function loadData() {
         showLoadingState();
         
@@ -448,7 +480,7 @@
                 state.allCompanies = parseData(data.values);
                 state.filteredCompanies = [...state.allCompanies];
                 
-                updateFilters(); // Populate dropdowns only if empty or needed
+                updateFilters(); 
                 updateDashboard();
                 updateTimestamp();
             } else {
@@ -472,49 +504,80 @@
                 profitGrowth: parseFloat(row[4]) || 0,
                 marginExpansion: row[5] ? row[5].trim() : '-',
                 sector: row[6] || 'Uncategorized',
-                percentChange: parseFloat(row[7]) || 0,
+                // Assuming Col 7 is the Price Change % from Result Day
+                percentChange: parseFloat(row[7]) || 0, 
                 resultStatus: row[8] ? row[8].trim() : 'Unknown'
             };
         }).filter(item => item !== null);
     }
 
-    // --- UI Logic ---
+    // --- UI Logic --- 
     function updateDashboard() {
-        applyInternalFilters(); // Re-run logic for search/sort
+        applyInternalFilters(); 
         renderStats();
         renderGrid();
     }
 
     function renderStats() {
-        const total = state.allCompanies.length;
-        const avgRev = (state.allCompanies.reduce((a, b) => a + b.revenueGrowth, 0) / total || 0).toFixed(1);
-        const avgProf = (state.allCompanies.reduce((a, b) => a + b.profitGrowth, 0) / total || 0).toFixed(1);
-        
-        // Count Top Performers
-        const stars = state.allCompanies.filter(c => 
-            ['excellent', 'great'].some(k => c.resultStatus.toLowerCase().includes(k))
-        ).length;
 
-        const statsHTML = `
-            <div class="stat-card">
-                <div class="label">Portfolio Size</div>
-                <div class="value">${total}</div>
+    const calcAvg = (arr, prop) => {
+        if (!arr.length) return 0;
+        const sum = arr.reduce((acc, curr) => acc + curr[prop], 0);
+        return (sum / arr.length).toFixed(1);
+    };
+
+    const total = state.allCompanies.length;
+
+    // Total averages
+    const totalAvgRevenue = calcAvg(state.allCompanies, 'revenueGrowth');
+    const totalAvgProfit  = calcAvg(state.allCompanies, 'profitGrowth');
+
+    // Margin Expansion stats
+    const marginExpansionCount = state.allCompanies.filter(
+        c => c.marginExpansion && c.marginExpansion.toString().trim().toLowerCase() === 'yes'
+    ).length;
+
+    const marginExpansionPct = total ? ((marginExpansionCount / total) * 100).toFixed(1) : 0;
+
+    const statsHTML = `
+        <!-- FIRST CARD → ONLY SHOW NUMBER OF COMPANIES -->
+        <div class="stat-card">
+            <div class="label">Total Portfolio</div>
+            <div class="value">${total}</div>
+        </div>
+
+        <!-- TOTAL AVG REVENUE -->
+        <div class="stat-card" style="border-left: 4px solid var(--primary);">
+            <div class="label">📈 Total Avg Revenue</div>
+            <div class="value ${getColor(totalAvgRevenue)}">${totalAvgRevenue}%</div>
+        </div>
+
+        <!-- TOTAL AVG PROFIT -->
+        <div class="stat-card">
+            <div class="label">💰 Total Avg Profit</div>
+            <div class="value ${getColor(totalAvgProfit)}">${totalAvgProfit}%</div>
+        </div>
+
+        <!-- MARGIN EXPANSION -->
+        <div class="stat-card">
+            <div class="label">Margin Expansion</div>
+            <div class="sub-stats-row">
+                <div class="sub-stat">
+                    <span class="sub-stat-label">Companies</span>
+                    <span class="sub-stat-val">${marginExpansionCount}</span>
+                </div>
+                <div class="sub-stat">
+                    <span class="sub-stat-label">% of Portfolio</span>
+                    <span class="sub-stat-val">${marginExpansionPct}%</span>
+                </div>
             </div>
-            <div class="stat-card">
-                <div class="label">Avg Revenue Growth</div>
-                <div class="value ${avgRev >= 0 ? 'text-pos' : 'text-neg'}">${avgRev}%</div>
-            </div>
-            <div class="stat-card">
-                <div class="label">Avg Profit Growth</div>
-                <div class="value ${avgProf >= 0 ? 'text-pos' : 'text-neg'}">${avgProf}%</div>
-            </div>
-            <div class="stat-card">
-                <div class="label">Excellent/ Great Results</div>
-                <div class="value text-pos">${stars}</div>
-            </div>
-        `;
-        document.getElementById('statsBar').innerHTML = statsHTML;
-    }
+        </div>
+    `;
+
+    document.getElementById('statsBar').innerHTML = statsHTML;
+}
+
+
 
     function renderGrid() {
         const grid = document.getElementById('companiesGrid');
@@ -535,7 +598,7 @@
                 </div>
 
                 <div class="market-cap-row">
-                    <span>M. Cap:</span>
+                    <span class="market-cap-label">Market Cap</span>
                     <span class="market-cap-value">${c.marketCap}</span>
                 </div>
 
@@ -559,7 +622,7 @@
                         </div>
                     </div>
                     <div class="metric-box">
-                        <div class="metric-label">Rating</div>
+                        <div class="metric-label">Result Rating</div>
                         <div class="status-badge ${getStatusClass(c.resultStatus)}">
                             ${c.resultStatus}
                         </div>
@@ -567,9 +630,9 @@
                 </div>
 
                 <div class="card-footer">
-                    <span class="pct-label">Change from Result</span>
-                    <span class="pct-val ${c.percentChange >= 0 ? 'change-pos' : 'change-neg'}">
-                        ${c.percentChange > 0 ? '▲' : (c.percentChange < 0 ? '▼' : '▬')}
+                    <span class="pct-label">Change from Result Day</span>
+                    <span class="pct-val ${c.percentChange > 0 ? 'change-pos' : (c.percentChange < 0 ? 'change-neg' : 'change-neu')}">
+                        ${c.percentChange > 0 ? '▲' : (c.percentChange < 0 ? '▼' : '')}
                         ${Math.abs(c.percentChange)}%
                     </span>
                 </div>
@@ -577,7 +640,7 @@
         `).join('');
     }
 
-    // --- Helpers ---
+    // --- Helpers --- 
     function showLoadingState() {
         const skeletonHTML = Array(4).fill('<div class="skeleton sk-card"></div>').join('');
         document.getElementById('companiesGrid').innerHTML = skeletonHTML;
@@ -590,12 +653,11 @@
 
     function updateTimestamp() {
         const now = new Date();
-        document.getElementById('lastUpdated').innerText = `Last Sync: ${now.toLocaleTimeString()}`;
+        document.getElementById('lastUpdated').innerHTML = `<span>Last Sync:</span> <strong>${now.toLocaleTimeString()}</strong>`;
     }
 
     function updateFilters() {
         const select = document.getElementById('sectorFilter');
-        // Keep "All Sectors" option, append new ones
         if(select.options.length <= 1) {
             const sectors = [...new Set(state.allCompanies.map(c => c.sector))].sort();
             sectors.forEach(s => {
@@ -622,44 +684,55 @@
         // Sort
         result.sort((a, b) => {
             switch(sortBy) {
-                case 'name': return a.name.localeCompare(b.name);
-                case 'revenue': return b.revenueGrowth - a.revenueGrowth;
-                case 'profit': return b.profitGrowth - a.profitGrowth;
-                case 'change': return Math.abs(b.percentChange) - Math.abs(a.percentChange); // Magnitude of change
-                case 'marketCap': return parseMCap(b.marketCap) - parseMCap(a.marketCap);
-                default: return 0;
+                case 'name': 
+                    return a.name.localeCompare(b.name);
+                case 'revenue': 
+                    return b.revenueGrowth - a.revenueGrowth;
+                case 'profit': 
+                    return b.profitGrowth - a.profitGrowth;
+                case 'change': 
+                    return b.percentChange - a.percentChange; 
+                case 'change_neg': 
+                    return a.percentChange - b.percentChange; 
+                case 'marketCap': 
+                    return parseMCap(b.marketCap) - parseMCap(a.marketCap);
+                default: 
+                    return 0;
             }
         });
 
         state.filteredCompanies = result;
     }
 
+    // More robust parsing for Currency, Crores (Cr), Lakhs (L), etc.
     function parseMCap(str) {
-        if (!str) return 0;
+        if(!str) return 0;
+        // 1. Convert to string and upper case
+        let s = str.toString().toUpperCase();
         
-        // 1. Normalize: Uppercase and remove commas
-        let s = str.toString().toUpperCase().replace(/,/g, '');
-        
-        // 2. Extract the numeric value (removes currency symbols like ₹, $)
-        // This Regex finds the first valid number in the string
-        let match = s.match(/[\d\.]+/); 
-        if (!match) return 0;
-        
-        let num = parseFloat(match[0]);
+        // 2. Remove Currency Symbols (₹, $) and commas/spaces
+        let clean = s.replace(/[₹$,\s]/g, '');
 
-        // 3. Apply Multipliers (Handles both International & Indian standards)
-        if (s.includes('T')) num *= 1e12;       // Trillion
-        else if (s.includes('B')) num *= 1e9;   // Billion
-        else if (s.includes('CR')) num *= 1e7;  // Crore (Indian)
-        else if (s.includes('M')) num *= 1e6;   // Million
-        else if (s.includes('L')) num *= 1e5;   // Lakh (Indian)
-        else if (s.includes('K')) num *= 1e3;   // Thousand
+        // 3. Extract the numeric part (e.g. "50.5" from "50.5CR")
+        let match = clean.match(/([\d.]+)/);
+        if(!match) return 0;
+        
+        let num = parseFloat(match[1]);
+        if(isNaN(num)) return 0;
+
+        // 4. Apply Multiplier based on Suffix
+        if (clean.includes('T')) num *= 1e12;       // Trillion
+        else if (clean.includes('B')) num *= 1e9;   // Billion
+        else if (clean.includes('M')) num *= 1e6;   // Million
+        else if (clean.includes('K')) num *= 1e3;   // Thousand
+        else if (clean.includes('CR')) num *= 10000000; // Crore (10 Million)
+        else if (clean.includes('L')) num *= 100000;    // Lakh (100 Thousand)
 
         return num;
     }
 
     function getColor(val) {
-        return val > 0 ? 'text-pos' : (val < 0 ? 'text-neg' : 'text-neu');
+        return parseFloat(val) > 0 ? 'text-pos' : (parseFloat(val) < 0 ? 'text-neg' : 'text-neu');
     }
 
     function getStatusClass(status) {
@@ -672,8 +745,7 @@
         return 'st-unknown';
     }
 
-    // --- Event Listeners ---
-    // Debounce Search for performance
+    // --- Event Listeners --- 
     let timeout = null;
     document.getElementById('searchInput').addEventListener('input', () => {
         clearTimeout(timeout);
@@ -685,9 +757,8 @@
 
     // Initial Load
     loadData();
-    // Auto Refresh every 60s
+    // Auto-refresh every 60 seconds
     setInterval(loadData, 60000);
-
 </script>
 </body>
 </html>
