@@ -10,12 +10,11 @@
     
     <style>
         :root {
-            /* Professional Palette */
             --bg-body: #f8fafc;
             --bg-card: #ffffff;
             --text-primary: #0f172a;
             --text-secondary: #64748b;
-            --primary: #4f46e5; /* Indigo */
+            --primary: #4f46e5;
             --primary-hover: #4338ca;
             --success-bg: #dcfce7;
             --success-text: #166534;
@@ -44,7 +43,6 @@
             padding: 24px;
         }
 
-        /* --- Header Section --- */
         .header-section {
             display: flex;
             flex-direction: column;
@@ -86,7 +84,6 @@
             gap: 6px;
         }
 
-        /* --- Stats Bar --- */
         .stats-bar {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -119,7 +116,6 @@
             color: var(--text-primary);
         }
 
-        /* Sub-stats for the multi-value cards */
         .sub-stats-row {
             display: flex;
             justify-content: space-between;
@@ -144,7 +140,6 @@
             letter-spacing: -0.02em;
         }
 
-        /* --- Controls & Filters --- */
         .controls {
             background: var(--bg-card);
             padding: 20px;
@@ -202,7 +197,7 @@
             font-size: 0.95rem;
             cursor: pointer;
             transition: all 0.2s;
-            height: 48px; /* Match input height */
+            height: 48px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -213,7 +208,6 @@
             transform: translateY(-1px);
         }
 
-        /* --- Grid & Cards --- */
         .companies-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -285,7 +279,6 @@
         .market-cap-label { color: var(--text-secondary); }
         .market-cap-value { font-weight: 700; color: var(--text-primary); }
 
-        /* Metrics Grid */
         .metrics-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -313,7 +306,6 @@
             font-weight: 700;
         }
 
-        /* Status Badges */
         .status-badge {
             display: inline-flex;
             align-items: center;
@@ -324,14 +316,11 @@
             font-weight: 700;
             width: 100%;
         }
-        .st-excellent { background: #064e3b; color: #ecfdf5; }
-        .st-great { background: #10b981; color: white; }
-        .st-good { background: #3b82f6; color: white; }
-        .st-weak { background: #fee2e2; color: #991b1b; }
-        .st-bad { background: #7f1d1d; color: #fecaca; }
+
+        .st-great { background: #10b981; color: white; }  /* Undervalued */
+        .st-bad { background: #7f1d1d; color: #fecaca; }  /* Overvalued */
         .st-unknown { background: #e2e8f0; color: #64748b; }
 
-        /* Percent Change Footer */
         .card-footer {
             margin-top: auto;
             padding-top: 16px;
@@ -358,7 +347,6 @@
             border-radius: 8px;
         }
 
-        /* Colors & Animations */
         .text-pos { color: var(--success-text); }
         .text-neg { color: var(--danger-text); }
         .text-neu { color: var(--text-secondary); }
@@ -380,9 +368,7 @@
             background-color: #f1f5f9;
         }
 
-        /* --- SKELETON LOADING --- */
         .skeleton {
-            background: #e2e8f0;
             background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
             border-radius: 8px;
             background-size: 200% 100%;
@@ -435,8 +421,6 @@
                 <option value="marketCap">Market Cap (High-Low)</option>
                 <option value="revenue">Revenue Growth (High-Low)</option>
                 <option value="profit">Profit Growth (High-Low)</option>
-                <option value="change">Price Change (Top Gainers)</option>
-                <option value="change_neg">Price Change (Top Losers)</option>
             </select>
         </div>
         <button class="btn-refresh" onclick="loadData()">
@@ -464,23 +448,18 @@
         filteredCompanies: []
     };
 
-    // --- Data Fetching --- 
     async function loadData() {
         showLoadingState();
-        
         try {
             const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.sheetID}/values/${CONFIG.range}?key=${CONFIG.apiKey}`;
             const response = await fetch(url);
-            
             if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
-            
             const data = await response.json();
 
             if (data.values && data.values.length > 1) {
                 state.allCompanies = parseData(data.values);
                 state.filteredCompanies = [...state.allCompanies];
-                
-                updateFilters(); 
+                updateFilters();
                 updateDashboard();
                 updateTimestamp();
             } else {
@@ -492,96 +471,100 @@
         }
     }
 
+    // STRICT COLUMN INDEX MAPPING:
+    // 0: Company_Name
+    // 1: Symbol
+    // 2: Market_Cap
+    // 3: YoY_Revenue
+    // 4: YoY_Profit
+    // 5: Margin_Expansion
+    // 6: Sector
+    // 7: (unused / helper column)
+    // 8: Valuation
+    // 9: Valuation_Methods  <-- (Previously Change_From_Result_Day)
     function parseData(rows) {
-        // Skip header row (i=1)
         return rows.slice(1).map(row => {
-            if (!row[0]) return null;
+            const name = row[0];
+            if (!name) return null;
+
+            const revenueStr = row[3] ?? '';
+            const profitStr  = row[4] ?? '';
+
             return {
-                name: row[0] || 'Unknown',
+                name: name || 'Unknown',
                 symbol: row[1] || 'N/A',
                 marketCap: row[2] || '0',
-                revenueGrowth: parseFloat(row[3]) || 0,
-                profitGrowth: parseFloat(row[4]) || 0,
-                marginExpansion: row[5] ? row[5].trim() : '-',
+                revenueGrowth: parseFloat(revenueStr) || 0,
+                profitGrowth: parseFloat(profitStr) || 0,
+                marginExpansion: (row[5] || '-').toString().trim(),
                 sector: row[6] || 'Uncategorized',
-                // Assuming Col 7 is the Price Change % from Result Day
-                percentChange: parseFloat(row[7]) || 0, 
-                resultStatus: row[8] ? row[8].trim() : 'Unknown'
+
+                // valuation from col 9 (I)
+                valuation: (row[8] || 'Unknown').toString().trim(),
+
+                // valuation method from col 10 (J)
+                valuationMethod: (row[9] || '-').toString().trim()
             };
-        }).filter(item => item !== null);
+        }).filter(Boolean);
     }
 
-    // --- UI Logic --- 
     function updateDashboard() {
-        applyInternalFilters(); 
+        applyInternalFilters();
         renderStats();
         renderGrid();
     }
 
     function renderStats() {
+        const calcAvg = (arr, prop) => {
+            if (!arr.length) return 0;
+            const sum = arr.reduce((acc, curr) => acc + curr[prop], 0);
+            return (sum / arr.length).toFixed(1);
+        };
 
-    const calcAvg = (arr, prop) => {
-        if (!arr.length) return 0;
-        const sum = arr.reduce((acc, curr) => acc + curr[prop], 0);
-        return (sum / arr.length).toFixed(1);
-    };
+        const total = state.allCompanies.length;
+        const totalAvgRevenue = calcAvg(state.allCompanies, 'revenueGrowth');
+        const totalAvgProfit  = calcAvg(state.allCompanies, 'profitGrowth');
 
-    const total = state.allCompanies.length;
+        const marginExpansionCount = state.allCompanies.filter(
+            c => c.marginExpansion && c.marginExpansion.toString().trim().toLowerCase() === 'yes'
+        ).length;
+        const marginExpansionPct = total ? ((marginExpansionCount / total) * 100).toFixed(1) : 0;
 
-    // Total averages
-    const totalAvgRevenue = calcAvg(state.allCompanies, 'revenueGrowth');
-    const totalAvgProfit  = calcAvg(state.allCompanies, 'profitGrowth');
+        const statsHTML = `
+            <div class="stat-card">
+                <div class="label">Total Portfolio</div>
+                <div class="value">${total}</div>
+            </div>
 
-    // Margin Expansion stats
-    const marginExpansionCount = state.allCompanies.filter(
-        c => c.marginExpansion && c.marginExpansion.toString().trim().toLowerCase() === 'yes'
-    ).length;
+            <div class="stat-card" style="border-left: 4px solid var(--primary);">
+                <div class="label">📈 Total Avg Revenue</div>
+                <div class="value ${getColor(totalAvgRevenue)}">${totalAvgRevenue}%</div>
+            </div>
 
-    const marginExpansionPct = total ? ((marginExpansionCount / total) * 100).toFixed(1) : 0;
+            <div class="stat-card">
+                <div class="label">💰 Total Avg Profit</div>
+                <div class="value ${getColor(totalAvgProfit)}">${totalAvgProfit}%</div>
+            </div>
 
-    const statsHTML = `
-        <!-- FIRST CARD → ONLY SHOW NUMBER OF COMPANIES -->
-        <div class="stat-card">
-            <div class="label">Total Portfolio</div>
-            <div class="value">${total}</div>
-        </div>
-
-        <!-- TOTAL AVG REVENUE -->
-        <div class="stat-card" style="border-left: 4px solid var(--primary);">
-            <div class="label">📈 Total Avg Revenue</div>
-            <div class="value ${getColor(totalAvgRevenue)}">${totalAvgRevenue}%</div>
-        </div>
-
-        <!-- TOTAL AVG PROFIT -->
-        <div class="stat-card">
-            <div class="label">💰 Total Avg Profit</div>
-            <div class="value ${getColor(totalAvgProfit)}">${totalAvgProfit}%</div>
-        </div>
-
-        <!-- MARGIN EXPANSION -->
-        <div class="stat-card">
-            <div class="label">Margin Expansion</div>
-            <div class="sub-stats-row">
-                <div class="sub-stat">
-                    <span class="sub-stat-label">Companies</span>
-                    <span class="sub-stat-val">${marginExpansionCount}</span>
-                </div>
-                <div class="sub-stat">
-                    <span class="sub-stat-label">% of Portfolio</span>
-                    <span class="sub-stat-val">${marginExpansionPct}%</span>
+            <div class="stat-card">
+                <div class="label">Margin Expansion</div>
+                <div class="sub-stats-row">
+                    <div class="sub-stat">
+                        <span class="sub-stat-label">Companies</span>
+                        <span class="sub-stat-val">${marginExpansionCount}</span>
+                    </div>
+                    <div class="sub-stat">
+                        <span class="sub-stat-label">% of Portfolio</span>
+                        <span class="sub-stat-val">${marginExpansionPct}%</span>
+                    </div>
                 </div>
             </div>
-        </div>
-    `;
-
-    document.getElementById('statsBar').innerHTML = statsHTML;
-}
-
-
+        `;
+        document.getElementById('statsBar').innerHTML = statsHTML;
+    }
 
     function renderGrid() {
         const grid = document.getElementById('companiesGrid');
-        
         if (state.filteredCompanies.length === 0) {
             grid.innerHTML = '<div class="no-data">No companies match your current filters.</div>';
             return;
@@ -622,25 +605,23 @@
                         </div>
                     </div>
                     <div class="metric-box">
-                        <div class="metric-label">Result Rating</div>
-                        <div class="status-badge ${getStatusClass(c.resultStatus)}">
-                            ${c.resultStatus}
+                        <div class="metric-label">Valuation</div>
+                        <div class="status-badge ${getValuationClass(c.valuation)}">
+                            ${c.valuation}
                         </div>
                     </div>
                 </div>
 
                 <div class="card-footer">
-                    <span class="pct-label">Change from Result Day</span>
-                    <span class="pct-val ${c.percentChange > 0 ? 'change-pos' : (c.percentChange < 0 ? 'change-neg' : 'change-neu')}">
-                        ${c.percentChange > 0 ? '▲' : (c.percentChange < 0 ? '▼' : '')}
-                        ${Math.abs(c.percentChange)}%
+                    <span class="pct-label">Valuation Method</span>
+                    <span class="pct-val change-neu">
+                        ${c.valuationMethod || '-'}
                     </span>
                 </div>
             </div>
         `).join('');
     }
 
-    // --- Helpers --- 
     function showLoadingState() {
         const skeletonHTML = Array(4).fill('<div class="skeleton sk-card"></div>').join('');
         document.getElementById('companiesGrid').innerHTML = skeletonHTML;
@@ -658,7 +639,7 @@
 
     function updateFilters() {
         const select = document.getElementById('sectorFilter');
-        if(select.options.length <= 1) {
+        if (select.options.length <= 1) {
             const sectors = [...new Set(state.allCompanies.map(c => c.sector))].sort();
             sectors.forEach(s => {
                 const opt = document.createElement('option');
@@ -674,29 +655,23 @@
         const sector = document.getElementById('sectorFilter').value;
         const sortBy = document.getElementById('sortFilter').value;
 
-        // Filter
         let result = state.allCompanies.filter(c => {
             const matchSearch = c.name.toLowerCase().includes(search) || c.symbol.toLowerCase().includes(search);
             const matchSector = sector === '' || c.sector === sector;
             return matchSearch && matchSector;
         });
 
-        // Sort
         result.sort((a, b) => {
-            switch(sortBy) {
-                case 'name': 
+            switch (sortBy) {
+                case 'name':
                     return a.name.localeCompare(b.name);
-                case 'revenue': 
+                case 'revenue':
                     return b.revenueGrowth - a.revenueGrowth;
-                case 'profit': 
+                case 'profit':
                     return b.profitGrowth - a.profitGrowth;
-                case 'change': 
-                    return b.percentChange - a.percentChange; 
-                case 'change_neg': 
-                    return a.percentChange - b.percentChange; 
-                case 'marketCap': 
+                case 'marketCap':
                     return parseMCap(b.marketCap) - parseMCap(a.marketCap);
-                default: 
+                default:
                     return 0;
             }
         });
@@ -704,60 +679,47 @@
         state.filteredCompanies = result;
     }
 
-    // More robust parsing for Currency, Crores (Cr), Lakhs (L), etc.
     function parseMCap(str) {
-        if(!str) return 0;
-        // 1. Convert to string and upper case
+        if (!str) return 0;
         let s = str.toString().toUpperCase();
-        
-        // 2. Remove Currency Symbols (₹, $) and commas/spaces
         let clean = s.replace(/[₹$,\s]/g, '');
-
-        // 3. Extract the numeric part (e.g. "50.5" from "50.5CR")
         let match = clean.match(/([\d.]+)/);
-        if(!match) return 0;
-        
+        if (!match) return 0;
         let num = parseFloat(match[1]);
-        if(isNaN(num)) return 0;
+        if (isNaN(num)) return 0;
 
-        // 4. Apply Multiplier based on Suffix
-        if (clean.includes('T')) num *= 1e12;       // Trillion
-        else if (clean.includes('B')) num *= 1e9;   // Billion
-        else if (clean.includes('M')) num *= 1e6;   // Million
-        else if (clean.includes('K')) num *= 1e3;   // Thousand
-        else if (clean.includes('CR')) num *= 10000000; // Crore (10 Million)
-        else if (clean.includes('L')) num *= 100000;    // Lakh (100 Thousand)
+        if (clean.includes('T')) num *= 1e12;
+        else if (clean.includes('B')) num *= 1e9;
+        else if (clean.includes('M')) num *= 1e6;
+        else if (clean.includes('K')) num *= 1e3;
+        else if (clean.includes('CR')) num *= 10000000;
+        else if (clean.includes('L')) num *= 100000;
 
         return num;
     }
 
     function getColor(val) {
-        return parseFloat(val) > 0 ? 'text-pos' : (parseFloat(val) < 0 ? 'text-neg' : 'text-neu');
+        const n = parseFloat(val);
+        return n > 0 ? 'text-pos' : (n < 0 ? 'text-neg' : 'text-neu');
     }
 
-    function getStatusClass(status) {
-        const s = status.toLowerCase();
-        if (s.includes('excellent')) return 'st-excellent';
-        if (s.includes('great')) return 'st-great';
-        if (s.includes('good')) return 'st-good';
-        if (s.includes('weak')) return 'st-weak';
-        if (s.includes('bad')) return 'st-bad';
+    function getValuationClass(val) {
+        const v = (val || '').toLowerCase();
+        if (v.includes('undervalued')) return 'st-great';
+        if (v.includes('overvalued')) return 'st-bad';
         return 'st-unknown';
     }
 
-    // --- Event Listeners --- 
     let timeout = null;
     document.getElementById('searchInput').addEventListener('input', () => {
         clearTimeout(timeout);
         timeout = setTimeout(updateDashboard, 300);
     });
-    
+
     document.getElementById('sectorFilter').addEventListener('change', updateDashboard);
     document.getElementById('sortFilter').addEventListener('change', updateDashboard);
 
-    // Initial Load
     loadData();
-    // Auto-refresh every 60 seconds
     setInterval(loadData, 60000);
 </script>
 </body>
